@@ -1,17 +1,31 @@
 package main
 
 import (
-    "github.com/gin-gonic/gin"
+	"auth-service/controllers"
+	"auth-service/initializers"
+	"log"
+
+	"github.com/gin-gonic/gin"
 )
+
+func init() {
+	initializers.SetupDatabase()
+
+	if initializers.DB == nil {
+        log.Fatal("Database connection is not initialized")
+    }
+
+	initializers.MigrateDB(initializers.DB)
+}
 
 func main() {
     router := gin.Default() 
 
-    router.GET("/", func(c *gin.Context) {
-        c.JSON(200, gin.H{
-            "message": "Hello, world!",
-        })
-    })
+    routerGroup := router.Group("/api/")
+    {
+        routerGroup.POST("/sign-up", controllers.SignUp)
+		routerGroup.POST("/login", controllers.Login)
+    }
 
     router.Run(":8082") 
 }
