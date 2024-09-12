@@ -3,6 +3,7 @@ package main
 import (
 	"auth-service/controllers"
 	"auth-service/initializers"
+	"auth-service/middleware"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -25,6 +26,7 @@ func main() {
     {
         routerGroup.POST("/sign-up", controllers.SignUp)
 		routerGroup.POST("/login", controllers.Login)
+		routerGroup.GET("/validate",middleware.RequireAuth, controllers.Validate)
     }
 
     router.Run(":8082") 
